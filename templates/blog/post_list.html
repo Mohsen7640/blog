@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load blog_tags %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+
+    <h1>XBlog</h1>
+
+    {% if tag %}
+        <h2>Posts taggit with: #{{ tag.name }}</h2>
+        <hr>
+    {% endif %}
+
+    <!--  Posts  -->
+    {% for post in page_obj %}
+        <!--  Title Post  -->
+        <h2>
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title }}
+            </a>
+        </h2>
+        <!--  End Title Post  -->
+
+        <!--  Author Post  -->
+        <p class="date">
+            Published {{ post.publish }} by {{ post.author }}
+        </p>
+        <!--  End Author Post  -->
+
+        <!--  Tags  -->
+        {% get_post_published post.pk %}
+        <!--  End Tags  -->
+
+        <!--  Body Post  -->
+        {{ post.body|markdown|truncatewords:30 }}
+        <!--  End Body Post  -->
+    {% endfor %}
+    <!--  End Posts  -->
+
+    <!--  Include Pagination  -->
+    {% include 'blog/partial/pagination.html' %}
+    <!--  End Include Pagination  -->
+
+{% endblock %}
+
+{% block sidebar %}
+    <h3>Welcome to XBlog</h3>
+    <hr>
+    <p>I've written {% get_count_post_published %} posts so far.</p>
+    <p>
+        <a href="{% url 'blog:post-feed' %}">Subscribe to RSS feed</a>
+    </p>
+    <p>
+        <a href="{% url 'blog:post-search' %}">Search</a>
+    </p>
+    <h3>Latest Posts</h3>
+    {% get_latest_post_published %}
+
+    <h3>Most Commented Posts</h3>
+
+    {% get_most_commented_posts as most_commented_posts %}
+    <ul>
+        {% for post in most_commented_posts %}
+            <li>
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}[{{ post.total_comments }}]</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load blog_tags %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <!--   Detail Post     -->
+
+    <!--  Title Post  -->
+    <h1>{{ post.title }}</h1>
+     <!--  End Title Post  -->
+
+    <p class="date">
+        Published {{ post.publish }} by {{ post.author }}
+    </p>
+
+    <!--  Tags  -->
+    {% get_post_published post.pk %}
+    <!--  End Tags  -->
+
+    {{ post.body|markdown }}
+
+    <!--   Share     -->
+    <p>
+        <a href="{% url 'blog:post-share' post.pk %}">Share</a>
+    </p>
+    <!--   End Share     -->
+
+    <!--   End Detail Post     -->
+
+    <!--   Comments     -->
+    {% get_comments_is_active post.pk %}
+    <!--   End Comments     -->
+{% endblock %}
+
+
+{% block sidebar %}
+    <!--   Similar Posts     -->
+    <h2>Similar Post</h2>
+    <hr>
+    {% get_similar_post_published post.pk %}
+    <!--   End Similar Posts     -->
+{% endblock %}

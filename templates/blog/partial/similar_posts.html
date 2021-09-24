@@ -1,0 +1,9 @@
+<ul>
+    {% for post in similar_posts %}
+        <li>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </li>
+    {% empty %}
+        <p>There are no similar posts yet.</p>
+    {% endfor %}
+</ul>

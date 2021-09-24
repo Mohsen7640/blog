@@ -1,0 +1,65 @@
+<hr>
+<!--   Form     -->
+<div>
+    <h2>Comment</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><input type="submit" value="Add comment"></p>
+    </form>
+</div>
+<!--   End Form     -->
+
+<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br>
+
+<hr>
+{% with comments.count as total_comment %}
+    <h6>{{ total_comment }} Comment{{ total_comment|pluralize }}</h6>
+{% endwith %}
+<hr>
+<!--   Comments     -->
+{% for comment in comments %}
+    <div class="comment">
+        <p class="info">
+            <span>
+                {{ comment.name }} ({{ comment.email }}) {{ comment.created_time }}
+            </span>
+            <span>
+                {{ comment.body|linebreaks }}
+            </span>
+        </p>
+    </div>
+
+    <!--   Reply Comments     -->
+    {% for child in comment.get_reply_comments %}
+        <div class="comment">
+            <p class="info">
+                <span>
+                    {{ child.name }} ({{ child.email }}) ({{ child.created_time }}) [Reply Comment]
+                </span>
+                <span>
+                    {{ child.body|linebreaks }}
+                </span>
+            </p>
+        </div>
+    {% endfor %}
+<!--   End Reply Comments     -->
+    <hr>
+    <!--   Reply Form Comment     -->
+    <div id="reply">
+        <a href="">reply</a>
+        <form action="{% url 'blog:reply-comment' post.pk comment.pk %}" method="post">
+            {% csrf_token %}
+            {{ reply_form.as_p }}
+            <p><input type="submit" value="Add comment"></p>
+        </form>
+    </div>
+    <!--   End Reply Form Comment     -->
+    <br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br>
+
+{% empty %}
+    <p>There are no comments yet.</p>
+{% endfor %}
+<!--   End Comments     -->

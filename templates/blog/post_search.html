@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load blog_tags %}
+
+
+
+{% block title %}Search{% endblock %}
+    
+
+
+{% block content %}
+    <h1>Query Searching: '{{ query }}'</h1>
+
+
+    <form method="GET">
+        {{ form.as_p }}
+        <p><input type="submit" value="Search"></p>
+    </form>
+
+    <br><br><br><br><br><br>
+    <hr>
+
+    {% for post in posts %}
+        <h4>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </h4>
+        {{ post.body|markdown|truncatewords:8 }}
+    {% empty %}
+        
+        {% if request.GET %}
+            <p>There are no result for your query.</p>
+        {% endif %}
+            
+    {% endfor %}
+
+{% endblock %}

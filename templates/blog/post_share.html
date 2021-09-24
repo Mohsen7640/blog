@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Share{% endblock %}
+
+{% block content %}
+
+    <!--  Share Form  -->
+    <h1>Share "{{ post.title }}" by e-mail</h1>
+    <form method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="Send e-mail">
+    </form>
+    <!--  End Share Form  -->
+
+{% endblock %}
