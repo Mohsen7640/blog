@@ -54,7 +54,7 @@ def get_most_commented_posts(limit=4):
     )
     reply_comments = Count(
         'comments',
-        filter=Q(comments__is_reply=True, comments__is_active=True)
+        filter=Q(comments__is_reply=True, comments__is_active=False)
     )
     return Post.published.annotate(
         total_comments=original_comments + reply_comments
