@@ -5,6 +5,8 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
+from django.contrib.postgres.operations import UnaccentExtension, TrigramExtension
+
 
 class Migration(migrations.Migration):
     initial = True
@@ -14,6 +16,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        TrigramExtension(),
+        UnaccentExtension(),
+
         migrations.CreateModel(
             name='Post',
             fields=[

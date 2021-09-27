@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models.query_utils import Q
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
@@ -75,7 +76,8 @@ def post_share(request, pk):
         if form.is_valid():
             cleaned_data = form.cleaned_data
             # Send Mail With Django
-            post_url = request.build_absolute_uri(post.get_absolute_url())  # Link Domain + Link Post
+            post_url = request.build_absolute_uri(
+                post.get_absolute_url())  # Link Domain + Link Post
             subject = f'{cleaned_data["name"]} recommends your read: {post.title}'
             message = f'Read {post.title} as {post_url}\n\n{cleaned_data["name"]}\'s comments {cleaned_data["comments"]}'
 
@@ -110,19 +112,17 @@ def post_search(request):
     if 'query' in request.GET.keys():
         form = SearchForm(request.GET)
         if form.is_valid():
-            cleaned_data = form.cleaned_data
 
-            query = cleaned_data['query']
+            query = request.GET.get('query', '')
             search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
             search_query = SearchQuery(query)
 
             posts = Post.published.annotate(
+                rank=SearchRank(search_vector, search_query),
                 similarity=TrigramSimilarity(
                     'title', query
                 )
-            ).filter(similarity__gt=0.1).annotate(
-                rank=SearchRank(search_vector, search_query)
-            ).filter(rank__gte=0.3).order_by('-rank')
+            ).filter(Q(rank__gte=0.3) | Q(similarity__gt=0.1)).order_by('-rank')
 
             return render(
                 request, template_name='blog/post_search.html',
